@@ -1,13 +1,11 @@
 export const rules = [
-  { field: "lastName", regExp: /[А-Яа-я]+/, depends: null },
-  { field: "firstName", regExp: /[А-Яа-я]+/, depends: null },
-  { field: "patronymic", regExp: /[А-Яа-я]+/, depends: null },
+  { field: "lastName", regExp: /[А-Яа-яЁё]+/, depends: null },
+  { field: "firstName", regExp: /[А-Яа-яЁё]+/, depends: null },
+  { field: "patronymic", regExp: /[А-Яа-яЁё]+/, depends: null },
 
   { field: "birthDate", date: true, depends: null },
   {
     field: "email",
-    regExp:
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
     depends: null,
   },
 
@@ -28,12 +26,12 @@ export const rules = [
   },
   {
     field: "prevFirstName",
-    regExp: /[А-Яа-я]+/,
+    regExp: /[А-Яа-яЁё]+/,
     depends: { field: "changedName", value: "yes" },
   },
   {
     field: "prevLastName",
-    regExp: /[А-Яа-я]+/,
+    regExp: /[А-Яа-яЁё]+/,
     depends: { field: "changedName", value: "yes" },
   },
   {

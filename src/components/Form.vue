@@ -22,7 +22,12 @@
       </div>
       <div v-bind:class="getClass('email')">
         <label for="email">E-mail</label>
-        <input id="email" type="email" v-model="formData.email" />
+        <input
+          id="email"
+          type="text"
+          inputmode="email"
+          v-model="formData.email"
+        />
       </div>
       <div v-bind:class="getClass('gender')">
         <p class="radio-caption">Пол</p>
@@ -208,6 +213,7 @@ import ClickOutside from "vue-click-outside";
 import { debounce } from "../utils/debounce";
 import { filterByField } from "../utils/filterByField";
 import { rules } from "../utils/validation";
+import validator from "email-validator";
 
 export default {
   data() {
@@ -243,9 +249,11 @@ export default {
   },
   created() {
     this.debouncedFilterList = debounce(filterByField, 500);
-    Object.keys(this.formData).forEach((key) => {
-      this.validation[key] = true;
-    });
+    this.citizenshipSearch = this.extendedCitizenship;
+    this.validation = Object.keys(this.formData).reduce((acc, key) => {
+      acc[key] = true;
+      return acc;
+    }, {});
   },
   methods: {
     submit(e) {
@@ -258,14 +266,14 @@ export default {
       this.isOpen = true;
     },
     closeDropdown() {
-      this.citizenshipSearch = this.formData.citizenship;
+      this.citizenshipSearch = this.extendedCitizenship;
       this.isOpen = false;
     },
     handleSelectCitizenship(e) {
       const { flag } = e.target.dataset;
       this.formData.citizenship = flag;
       this.isOpen = false;
-      this.citizenshipSearch = flag;
+      this.citizenshipSearch = this.extendedCitizenship;
     },
     validate() {
       const validation = {};
@@ -278,6 +286,8 @@ export default {
         }
         validation[rule.field] = rule.date
           ? new Date(this.formData[rule.field]) < Date.now() || dep
+          : rule.field === "email"
+          ? validator.validate(this.formData[rule.field])
           : Boolean(this.formData[rule.field].match(rule.regExp)) || dep;
       });
       this.validation = { ...this.validation, ...validation };
@@ -292,6 +302,12 @@ export default {
   computed: {
     isValid() {
       return !Object.values(this.validation).includes(false);
+    },
+    extendedCitizenship() {
+      const { flag, nationality } = this.citizenships.find(
+        (el) => el.flag === this.formData.citizenship
+      );
+      return `${nationality} ${flag}`;
     },
   },
   watch: {
